@@ -1,0 +1,105 @@
+create table Categories (
+Category_Id int primary key,
+Category_Name varchar(50) unique Not Null,
+
+)
+
+insert into Categories values ("101","Category1")
+insert into Categories values ("102","Category2")
+insert into Categories values ("105","Category5")
+insert into Categories values ("103","Category3")
+insert into Categories values ("104","Category4")
+insert into Categories values ("100","Category0")
+
+create table Publishers (
+
+Publisher_Id int primary key,
+Publisher_Name varchar(50) Not Null
+
+)
+
+insert into Publishers values ("20","Suman Dutta")
+insert into Publishers values ("28","Mainak Saha")
+insert into Publishers values ("45","Dibankar Mukherjee")
+insert into Publishers values ("67","Ritil Mishra")
+insert into Publishers values ("91","Ashit Paul")
+insert into Publishers values ("38","Ashit Paul")
+
+create table Books (
+
+Book_Id int primary key identity(1,1),
+title varchar(50) Not Null,
+ISBN int unique Not Null,
+Publication_year int Not Null,
+Publisher_Id int foreign key references Publishers(Publisher_Id) on delete cascade,
+Category_Id int foreign key references Categories(Category_Id) on delete cascade,
+Author_Name varchar(50) check(Author_Name is Not Null)
+
+)
+
+insert into Books values ("Clean code","1234","2012","20","100","Rober C.Martin")
+insert into Books values ("The mythical man-month","1344","2014","28","101","Frederick Brooks")
+insert into Books values ("The pragmatic programmer","1466","2016","45","102","Andrew Hunt")
+insert into Books values ("Code complete","1777","2019","67","103","Steve McConnell")
+insert into Books values ("Programming pearls","1999","2005","91","104","Martin Fowler")
+insert into Books values ("Introduction to algorithms","9954","2020","38","105","Thomas H. Cormen")
+
+create table Users (
+
+User_Id int primary key,
+Username varchar(30) Not Null,
+Email varchar(30) unique Not Null,
+Phone_Number int unique Not Null
+)
+
+insert into Users values ("1","Arghyadeep34","arghyadeep@gmail.com","7557")
+insert into Users values ("2","Udit33","udit@gmail.com","5675")
+insert into Users values ("3","Suman78","suman@gmail.com","9944")
+insert into Users values ("4","Sid45","sid@gmail.com","6565")
+insert into Users values ("5","Ashit45","ashit@gmail.com","0965")
+insert into Users values ("6","Raj45","raj@gmail.com","5656")
+
+create table Borrowings (
+
+Borrow_Id int primary key identity(1,1),
+User_Id int foreign key references Users(User_Id) on delete cascade,
+Book_Id int foreign key references Books(Book_Id) on delete cascade,
+Borrow_Date date Not Null,
+Return_Date date Not Null
+
+)
+
+insert into Borrowings values ("1","1",'2003-09-24','2005-09-02')
+insert into Borrowings values ("2","2","2005-09-24","2006-09-24")
+insert into Borrowings values ("3","3","2007-09-24","2008-09-24")
+insert into Borrowings values ("4","4","2009-09-24","2004-09-24")
+insert into Borrowings values ("5","5","2001-09-24","2002-09-24")
+insert into Borrowings values ("6","6","2002-09-24","2004-09-24")
+
+select * from Books;
+select * from Categories;
+select * from Publishers;
+select * from Users;
+select * from Borrowings;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
