@@ -1,0 +1,24 @@
+using System;
+ 
+namespace SumOfDigits
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("Enter a number: ");
+            int number = int.Parse(Console.ReadLine());
+ 
+            int sum = 0;
+            int digits = (int)Math.Log10(number) + 1; // Calculate number of digits
+ 
+            for (int i = 0; i < digits; i++)
+            {
+                sum += number % 10;
+                number /= 10;
+            }
+ 
+            Console.WriteLine("Sum of digits: " + sum);
+        }
+    }
+}
