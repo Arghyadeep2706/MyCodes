@@ -1,0 +1,32 @@
+using System;
+ 
+namespace ReverseNumber
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int num, reversed = 0, remainder, digits = 0;
+ 
+            Console.Write("Enter an integer: ");
+            num = int.Parse(Console.ReadLine());
+ 
+            // Calculate the number of digits
+            int temp = num;
+            while (temp != 0)
+            {
+                digits++;
+                temp /= 10;
+            }
+ 
+            for (int i = 0; i < digits; i++)
+            {
+                remainder = num % 10;
+                reversed = reversed * 10 + remainder;
+                num /= 10;
+            }
+ 
+            Console.WriteLine("Reversed number: " + reversed);
+        }
+    }
+}
