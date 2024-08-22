@@ -1,0 +1,25 @@
+using System;
+ 
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Even Numbers from 1 to 30:");
+        for (int i = 1; i <= 30; i++)
+        {
+            if (i % 2 == 0)
+            {
+                Console.Write(i + " ");
+            }
+        }
+ 
+        Console.WriteLine("\n\nOdd Numbers from 1 to 30:");
+        for (int i = 1; i <= 30; i++)
+        {
+            if (i % 2 != 0)
+            {
+                Console.Write(i + " ");
+            }
+        }
+    }
+}
