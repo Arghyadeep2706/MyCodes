@@ -1,0 +1,295 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace AddressBook
+{
+    internal class Program
+    {
+        class BookApp
+        {
+            public string Name { get; set; }
+            public List<int> PhoneNumbers { get; set; } = new List<int>();
+            public string Email { get; set; }
+        }
+
+        static void Main(string[] args)
+        {
+            List<BookApp> app = new List<BookApp>();
+
+            while (true)
+            {
+                Console.WriteLine("\nAddress Book Menu:");
+                Console.WriteLine("Press 1 to Add Contact");
+                Console.WriteLine("Press 2 to Search Contact");
+                Console.WriteLine("Press 3 to Edit Contact");
+                Console.WriteLine("Press 4 to Delete Contact");
+                Console.WriteLine("Press 5 to Merge Contacts");
+                Console.WriteLine("Press 6 to Export Contacts");
+                Console.WriteLine("Press 7 to Import Contacts");
+                Console.WriteLine("Press 8 to Sort Contacts");
+                Console.WriteLine("Press 9 to Show All Contacts");
+                Console.WriteLine("Press 10 to Exit");
+                Console.Write("Choose an option: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        AddContact();
+                        break;
+                    case "2":
+                        SearchContact();
+                        break;
+                    case "3":
+                        EditContact();
+                        break;
+                    case "4":
+                        DeleteContact();
+                        break;
+                    case "5":
+                        ContactMerge();
+                        break;
+                    case "6":
+                        ContactExport();
+                        break;
+                    case "7":
+                        ImportContacts();
+                        break;
+                    case "8":
+                        ContactSort();
+                        break;
+                    case "9":
+                        ShowAllContact();
+                        break;
+                    case "10":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option. Please try again.");
+                        break;
+                }
+            }
+
+            void AddContact()
+            {
+                Console.WriteLine("Enter Name:");
+                string Name = Console.ReadLine();
+
+                Console.WriteLine("Enter Phone Number:");
+                int PhoneNo = Convert.ToInt32(Console.ReadLine());
+
+                Console.WriteLine("Enter Email:");
+                string Email = Console.ReadLine();
+
+                var existingContact = app.FirstOrDefault(c => c.Name == Name && c.Email == Email);
+
+                if (existingContact != null)
+                {
+                    if (existingContact.PhoneNumbers.Contains(PhoneNo))
+                    {
+                        Console.WriteLine("This phone number already exists for the contact.");
+                    }
+                    else
+                    {
+                        existingContact.PhoneNumbers.Add(PhoneNo);
+                        Console.WriteLine("Phone number added successfully.");
+                    }
+                }
+                else
+                {
+                    app.Add(new BookApp { Name = Name, PhoneNumbers = new List<int> { PhoneNo }, Email = Email });
+                    Console.WriteLine("Contact added successfully.");
+                }
+            }
+            void SearchContact()
+            {
+               
+                Console.WriteLine("\n\nEnter Name and Email to Search Contact:");
+                Console.WriteLine("Enter Name:");
+                string Name1 = Console.ReadLine();
+                Console.WriteLine("Enter Email:");
+                string Email1 = Console.ReadLine();
+
+                var matchingContacts = app.Where(x => x.Name == Name1 && x.Email == Email1).ToList();
+
+                if (matchingContacts.Any())
+                {
+                    foreach (var contact in matchingContacts)
+                    {
+                        Console.WriteLine($"Phone Numbers of {Name1} having email {Email1}: {string.Join(", ", contact.PhoneNumbers)}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Name not found.");
+                }
+            }
+
+            void EditContact()
+            {
+                Console.WriteLine("\n\nEnter Name to Edit Contact:");
+                string nameToEdit = Console.ReadLine();
+
+                var contactToEdit = app.FirstOrDefault(x => x.Name == nameToEdit);
+
+                if (contactToEdit != null)
+                {
+                    Console.WriteLine($"Editing contact: {contactToEdit.Name}");
+                    Console.WriteLine("Current phone numbers:");
+                    for (int i = 0; i < contactToEdit.PhoneNumbers.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}: {contactToEdit.PhoneNumbers[i]}");
+                    }
+
+                    Console.Write("Enter the number of the phone number you want to edit (or press Enter to add a new one): ");
+                    string input = Console.ReadLine();
+
+                    if (int.TryParse(input, out int numberIndex) && numberIndex > 0 && numberIndex <= contactToEdit.PhoneNumbers.Count)
+                    {
+                        Console.Write("Enter new phone number: ");
+                        int newPhoneNo;
+                        if (int.TryParse(Console.ReadLine(), out newPhoneNo))
+                        {
+                            contactToEdit.PhoneNumbers[numberIndex - 1] = newPhoneNo;
+                            Console.WriteLine("Phone number updated successfully.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid phone number format. Contact not updated.");
+                        }
+                    }
+                    else
+                    {
+                        Console.Write("Enter new phone number to add: ");
+                        int newPhoneNo;
+                        if (int.TryParse(Console.ReadLine(), out newPhoneNo))
+                        {
+                            contactToEdit.PhoneNumbers.Add(newPhoneNo);
+                            Console.WriteLine("New phone number added successfully.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid phone number format. Contact not updated.");
+                        }
+                    }
+
+                    Console.Write("Enter new email: ");
+                    string newEmail = Console.ReadLine();
+                    contactToEdit.Email = newEmail;
+
+                    Console.WriteLine("Contact updated successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Contact not found.");
+                }
+            }
+
+            void DeleteContact()
+            {
+                Console.WriteLine("\nEnter phone number to delete that contact:");
+                int num = Convert.ToInt32(Console.ReadLine());
+                var data = app.FirstOrDefault(x => x.PhoneNumbers.Contains(num));
+                if (data != null)
+                {
+                    data.PhoneNumbers.Remove(num);
+                    if (!data.PhoneNumbers.Any())
+                    {
+                        app.Remove(data);
+                    }
+                    Console.WriteLine($"\nPhone Number {num} deleted successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("\nInputted phone number not found.");
+                }
+            }
+
+            void ContactMerge()
+            {
+                var groupedContacts = app.GroupBy(c => c.Name);
+
+                foreach (var group in groupedContacts)
+                {
+                    if (group.Count() > 1)
+                    {
+                        var mergedContact = new BookApp
+                        {
+                            Name = group.Key,
+                            PhoneNumbers = group.SelectMany(c => c.PhoneNumbers).Distinct().ToList(),
+                            Email = group.First().Email
+                        };
+
+
+                        app.RemoveAll(c => c.Name == group.Key);
+                        app.Add(mergedContact);
+                    }
+                }
+            }
+            void ContactExport()
+            {
+            
+                Console.Write("Enter the file path to export contacts (e.g., contacts.csv): ");
+                string filePath = Console.ReadLine();
+
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (var contact in app)
+                    {
+                        writer.WriteLine($"{contact.Name},{string.Join(";", contact.PhoneNumbers)},{contact.Email}");
+                    }
+                }
+                Console.WriteLine($"Contacts exported to {filePath} successfully.");
+            }
+
+            void ImportContacts()
+            {
+                Console.Write("Enter the file path to import contacts (e.g., existing_contacts.csv): ");
+                string filePath = Console.ReadLine();
+
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] fields = line.Split(',');
+                        string name = fields[0];
+                        List<int> phoneNumbers = fields[1].Split(';').Select(int.Parse).ToList();
+                        string email = fields[2];
+
+                        var existingContact = app.FirstOrDefault(c => c.Name == name && c.Email == email);
+                        if (existingContact != null)
+                        {
+                            existingContact.PhoneNumbers.AddRange(phoneNumbers.Except(existingContact.PhoneNumbers));
+                        }
+                        else
+                        {
+                            app.Add(new BookApp { Name = name, PhoneNumbers = phoneNumbers, Email = email });
+                        }
+                    }
+                }
+                Console.WriteLine($"Contacts imported from {filePath} successfully.");
+            }
+
+            void ContactSort()
+            {
+                Console.WriteLine("Sorted contact list by name:");
+                var sortedContacts = app.OrderBy(c => c.Name).ToList();
+                foreach (var item in sortedContacts)
+                {
+                    Console.WriteLine($"Name: {item.Name} Phone Numbers: {string.Join(", ", item.PhoneNumbers)} Email: {item.Email}");
+                }
+            }
+
+            void ShowAllContact()
+            {
+                Console.WriteLine("\nAll contacts:");
+                foreach (var item in app)
+                {
+                    Console.WriteLine($"Name: {item.Name} Phone Numbers: {string.Join(", ", item.PhoneNumbers)} Email: {item.Email}");
+                }
+            }
+        }
+    }
+}
