@@ -1,0 +1,144 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Assignment
+{
+    internal class Project
+    {
+        class Expenses
+        {
+            public float Amount { get; set; }
+            public string Description { get; set; }
+            public string Category { get; set; }
+            public DateTime Date { get; set; }
+        }
+
+        static void Main(string[] args)
+        {
+            var expenses = new List<Expenses>();
+            var budgetLimits = new Dictionary<string, float>();
+            string addMore;
+
+            // Loop for adding expenses
+            do
+            {
+                Console.WriteLine("Enter the Amount for this expense:");
+                float amt = float.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter the description of the expense:");
+                string desc = Console.ReadLine();
+
+                Console.WriteLine("Enter the category of the expense:");
+                string cat = Console.ReadLine();
+
+                if (!budgetLimits.ContainsKey(cat))
+                {
+                    Console.WriteLine($"Enter the budget limit for {cat}:");
+                    float budgetLimit = float.Parse(Console.ReadLine());
+                    budgetLimits[cat] = budgetLimit;
+                }
+
+                Console.WriteLine("Enter the date of the expense (yyyy-mm-dd):");
+                DateTime date = DateTime.Parse(Console.ReadLine());
+
+                expenses.Add(new Expenses { Amount = amt, Description = desc, Category = cat, Date = date });
+
+                float currentTotal = expenses.Where(e => e.Category == cat && e.Date.Month == date.Month && e.Date.Year == date.Year).Sum(e => e.Amount);
+                if (currentTotal > budgetLimits[cat])
+                {
+                    Console.WriteLine($"You have exceeded your budget for {cat} in this month!");
+                }
+
+                Console.WriteLine("Add another expense? (yes/no)");
+                addMore = Console.ReadLine().ToLower();
+
+            } while (addMore == "yes");
+
+            // Display all expenses
+            Console.WriteLine("\nExpenses added");
+            foreach (var expense in expenses)
+            {
+                Console.WriteLine($"Amount: {expense.Amount}, Description: {expense.Description}, Category: {expense.Category}, Date: {expense.Date.ToShortDateString()}");
+            }
+
+            // Customizing expenses based on category
+            Console.WriteLine("\n\nCustomizing expenses based on category:");
+            var CatGroup = expenses.GroupBy(e => e.Category);
+            foreach (var group in CatGroup)
+            {
+                Console.WriteLine($"Category: {group.Key}");
+                foreach (var item in group)
+                {
+                    Console.WriteLine($"Amount: {item.Amount}, Description: {item.Description}, Date: {item.Date.ToShortDateString()}");
+                }
+            }
+
+            // Budget Summary
+            Console.WriteLine("\nBudget Summary:");
+            foreach (var category in budgetLimits.Keys)
+            {
+                float currentTotal = expenses.Where(e => e.Category == category).Sum(e => e.Amount);
+                float budgetLimit = budgetLimits[category];
+                float remainingBudget = budgetLimit - currentTotal;
+
+                Console.WriteLine($"{category}: Spent {currentTotal}, Remaining budget: {remainingBudget}");
+            }
+
+            // Data filtering option
+            Console.WriteLine("\nWant to filter data? (yes/no):");
+            string filterChoice = Console.ReadLine().ToLower();
+
+            if (filterChoice == "yes")
+            {
+                Console.WriteLine("Filter data by?");
+                Console.WriteLine("1. Date");
+                Console.WriteLine("2. Description");
+                Console.WriteLine("3. Category");
+                string filterType = Console.ReadLine();
+
+                IEnumerable<Expenses> filteredExpenses = expenses;
+
+                switch (filterType)
+                {
+                    case "1":
+                        Console.WriteLine("Enter the start date for filtering (yyyy-mm-dd):");
+                        DateTime startDate = DateTime.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Enter the end date for filtering (yyyy-mm-dd):");
+                        DateTime endDate = DateTime.Parse(Console.ReadLine());
+
+                        filteredExpenses = filteredExpenses.Where(e => e.Date >= startDate && e.Date <= endDate);
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Enter a description keyword to filter by:");
+                        string filterDescription = Console.ReadLine();
+                        filteredExpenses = filteredExpenses.Where(e => e.Description.Contains(filterDescription, StringComparison.OrdinalIgnoreCase));
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Enter a category to filter by:");
+                        string filterCategory = Console.ReadLine();
+                        filteredExpenses = filteredExpenses.Where(e => e.Category == filterCategory);
+                        break;
+
+
+
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+
+                Console.WriteLine("\nFiltered Expenses:");
+                foreach (var expense in filteredExpenses)
+                {
+                    Console.WriteLine($"Amount: {expense.Amount}, Description: {expense.Description}, Category: {expense.Category}, Date: {expense.Date.ToShortDateString()}");
+                }
+            }
+
+            Console.WriteLine("\nThank you for using our Application.");
+            Console.ReadKey();
+        }
+    }
+}
