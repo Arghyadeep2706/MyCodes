@@ -1,0 +1,161 @@
+namespace Assignment
+{
+    internal class Calculator
+    {
+        static void Main(string[] args)
+        {
+
+            bool keepRunning = true;
+
+            while (keepRunning)
+            {
+
+                Console.WriteLine("Simple Calculator");
+                Console.WriteLine("1. Addition");
+                Console.WriteLine("2. Subtraction");
+                Console.WriteLine("3. Multiplication");
+                Console.WriteLine("4. Division (/)");
+                Console.WriteLine("5. Generate Random Number");
+                Console.WriteLine("6. Square Root");
+                Console.WriteLine("7. Power/Exponentiation");
+                Console.WriteLine("8. Logarithm");
+                Console.WriteLine("9. Anti-Log");
+                Console.WriteLine("10. Exit");
+                Console.Write("Choose an option: ");
+
+                int choice = Convert.ToInt32(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 1:
+                        Console.WriteLine("Enter 1st number ");
+                        double x = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Enter 2nd number ");
+                        double y = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Addition =" + x + "+" + y + " = " + Addition(x, y));
+                        break;
+                    case 2:
+                        Console.WriteLine("Enter 1st number ");
+                        double x1 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Enter 2nd number ");
+                        double y1 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Subtraction = " + Subtraction(x1, y1));
+                        break;
+                    case 3:
+                        Console.WriteLine("Enter 1st number ");
+                        double x2 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Enter 2nd number ");
+                        double y2 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Multiplication = " + Multiplication(x2, y2));
+                        break;
+
+                    case 4:
+                        Console.WriteLine("Enter 1st number ");
+                        double x3 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("Enter 2nd number ");
+                        double y3 = Convert.ToDouble(Console.ReadLine());
+                        Console.WriteLine("" + Division(x3, y3));
+                        break;
+
+                    case 5:
+                        GenerateRandomNumber();
+                        break;
+
+                    case 6:
+                        CalculateSquareRoot();
+                        break;
+
+                    case 7:
+                        CalculatePower();
+                        break;
+
+                    case 8:
+                        CalculateLogarithm();
+                        break;
+
+                    case 9:
+                        CalculateAntiLogarithm();
+                        break;
+
+                    case 10:
+                        keepRunning = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option!");
+                        break;
+                }
+            }
+        }
+        static double Addition(double a, double b)
+        {
+            return a + b;
+        }
+
+        static double Subtraction(double a, double b)
+        {
+            return a - b;
+        }
+
+        static double Multiplication(double a, double b)
+        {
+            return a * b;
+        }
+
+        static double Division(double a, double b)
+        {
+            if (b == 0)
+            {
+                Console.WriteLine("No division by Zero");
+                return double.NaN;
+            }
+            return a / b;
+        }
+
+        static void GenerateRandomNumber()
+        {
+            Random random = new Random();
+            Console.WriteLine("Random Number: " + random.NextDouble());
+        }
+
+        static void CalculateSquareRoot()
+        {
+            Console.Write("Enter a number to find the square root: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            if (a < 0)
+            {
+                Console.WriteLine("Cannot calculate the square root of a negative number.");
+                return;
+            }
+            Console.WriteLine("Square Root: " + Math.Sqrt(a));
+        }
+
+        static void CalculatePower()
+        {
+            Console.Write("Enter the base number: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter the exponent: ");
+            double b = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine($"Result of {a}^{b}: {Math.Pow(a, b)}");
+        }
+
+        static void CalculateLogarithm()
+        {
+            Console.Write("Enter a number to find the logarithm: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            if (a <= 0)
+            {
+                Console.WriteLine("Logarithm is only defined for positive numbers.");
+                return;
+            }
+            Console.WriteLine($"Logarithm (base 10) of {a}: {Math.Log10(a)}");
+        }
+
+        static void CalculateAntiLogarithm()
+        {
+            Console.Write("Enter a number to find the anti-logarithm (10^x): ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine($"Anti-Logarithm (10^{a}): {Math.Pow(10, a)}");
+        }
+
+    }
+}
